@@ -15,8 +15,7 @@ module.exports = function(grunt) {
     function checkHtml() {
         /* jshint validthis: true */
         var options = this.options({
-            elements : ['button', 'a', 'input', 'select'],
-            attrs : ['ng-click', 'ng-submit']
+            elements : ['button', 'a', 'input', 'select']
         });
 
         var currentFile, hasError = false, currentLine, index = 0;
@@ -59,18 +58,20 @@ module.exports = function(grunt) {
         }
 
         function parseOpenTag(name, attribs){
-            if (options.elements.indexOf(name) !== -1 && !attribs.hasOwnProperty(options.check)) {
-                grunt.log.warn(currentFile + ' Line ' + index + ': (' + name + ') ' + currentLine);
-                index++;
-                hasError = true;
-            }
-            options.attrs.forEach(function(attribute) {
-                if (attribs.hasOwnProperty(attribute) && !attribs.hasOwnProperty(options.check)) {
+            if (options.elements.indexOf(name) !== -1) {
+                var hasMandatoryAttribute = false;
+                options.checks.forEach(function(check) {
+                    if (attribs.hasOwnProperty(check)) {
+                        hasMandatoryAttribute = true;
+                    }
+
+                });
+                if (!hasMandatoryAttribute) {
                     grunt.log.warn(currentFile + ' Line ' + index + ': (' + name + ') ' + currentLine);
                     index++;
                     hasError = true;
                 }
-            });
+            }
         }
     }
 };
